@@ -86,9 +86,36 @@
         .catch(error => console.error('Error deleting expense:', error));
     }
 
-    // Modify addExpense function to use the saveExpense function
+    function editExpense(id, amount, description, category) {
+      const amountInput = document.getElementById('expenseAmount');
+      const descriptionInput = document.getElementById('expenseDescription');
+      const categoryInput = document.getElementById('expenseCategory');
 
-    // Modify editExpense function to use the updateExpense function
+      amountInput.value = amount;
+      descriptionInput.value = description;
+      categoryInput.value = category;
+
+      const submitButton = document.querySelector('button[type="submit"]');
+      submitButton.textContent = 'Update Expense';
+
+      document.getElementById('expenseForm').removeEventListener('submit', handleFormAdd);
+      document.getElementById('expenseForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!isNaN(amountInput.value) && descriptionInput.value && categoryInput.value) {
+          const updatedExpense = {
+            _id: id,
+            amount: parseFloat(amountInput.value),
+            description: descriptionInput.value,
+            category: categoryInput.value
+          };
+          updateExpense(updatedExpense);
+          submitButton.textContent = 'Add Expense';
+          this.reset();
+          this.removeEventListener('submit', handleFormEdit);
+          this.addEventListener('submit', handleFormAdd);
+        }
+      });
+    }
 
     function updateExpenseList() {
       const expenseList = document.getElementById('expenseList');
@@ -115,14 +142,12 @@
       const description = document.getElementById('expenseDescription').value;
       const category = document.getElementById('expenseCategory').value;
       if (!isNaN(amount) && description && category) {
-        // Modify this section to use saveExpense function
         const newExpense = { amount, description, category };
         saveExpense(newExpense);
         this.reset();
       }
     });
 
-    // Call fetchExpenses to populate expenses on page load
     fetchExpenses();
   </script>
 </body>
